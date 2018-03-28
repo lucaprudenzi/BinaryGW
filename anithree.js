@@ -53,6 +53,7 @@ function init() {
 		this.howSlow=1;
 		this.initialFreq=20;
 		this.observedDistance=440;
+        this.noiseStrength=20;
 	};
     
     
@@ -63,10 +64,8 @@ function init() {
 	howSlow_control=gui.add(controls, 'howSlow',1,10);
 	gui.add(controls, 'initialFreq', 5,50).listen();
 	gui.add(controls, 'observedDistance',100,500).listen();
-	
-    var fizzyText = new FizzyText();
-    gui.add(fizzyText, 'noiseStrength', 0, 100).listen();
-    
+    gui.add(controls, 'noiseStrength',0,100).listen();
+
 	// AXES
 	axes = buildAxes(100);
 	scene.add(axes);
@@ -102,10 +101,7 @@ function init() {
 	  scene.add(pano);
 	}
 	
-	var update = function() {
-        requestAnimationFrame(update);
-        fizzyText.noiseStrength = Math.random();
-    };
+	
 	
 	function buildAxes(length) {
 		var axes = new THREE.Object3D();
@@ -231,5 +227,9 @@ function animate(time) {
 	camera_control.update();
 	plane.geometry.verticesNeedUpdate = true;
 	renderer.render(scene, camera );
+    var update = function() {
+        requestAnimationFrame(update);
+        controls.noiseStrength = Math.random();
+    };
     update();
 }
