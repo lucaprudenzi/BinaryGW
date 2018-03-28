@@ -1,0 +1,73 @@
+<html>
+   <head>
+      <title>Binary system</title>
+<meta charset="utf-8">
+
+<!-- set the CSS -->
+<style type="text/css">
+
+body {
+	font: 11px Arial;
+	overflow: hidden; /*go in fullscreen*/
+}
+
+path {
+    stroke: steelblue;
+    stroke-width: 2;
+    fill: none;
+}
+
+</style>
+</head>
+
+<body>
+<script src="lib/three.js"></script>
+<script src="lib/OrbitControls.js"></script>
+<script src="lib/dat.gui.js"></script>
+<script src="lib/d3.min.js"></script>
+
+<!-- animation with threejs
+ For the dimension of the canvas change
+ info.style.width in anithree.js
+-->
+<div id="space2">
+</div>
+
+<!--
+<div id="infoBox" title="Demo Information">
+In this simulation it is possible to change the masses of the two body (expressed in solar masses), how slow the time flows (0.1=10% as default), the initial frequqnecy of the gravitatinal waves.
+</div>
+-->
+
+<!--
+The following variable are needed for be accessible from the various script
+-->
+<script type='text/javascript' >
+  var M_c_pass = 0;
+  var M1_pass = 0;
+  var M2_pass = 0;
+  var nu_pass = 0;
+  var freq_pass = 0;
+  var obsDist = 0;
+  var timeArr = [];
+  var freqArr = [];
+  var psiplus = [];
+  var htildeplusArr = [];
+  var hArr = [];
+  var arrData = [];
+  var arrData_2 = [];
+  var data= [];
+  var data_2 = [];
+  var total_array=[];
+  var asdArr=[];
+  var F_aligo = [];
+  var Snoise = [];
+</script>
+
+
+<script src="anithree.js">
+</script>
+
+
+</body>
+</html>
