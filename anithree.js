@@ -8,11 +8,13 @@ var angle;
 var f_i=10;
 var time_speed=1;
 var old_major_ax;
+var radius_camera;
 
 //Constants
 m_sun=2*Math.pow(10,33);
 c=3*Math.pow(10,10);
 G=6.67*Math.pow(10,-8);
+theta = 0.174533;
 
 init();
 animate();
@@ -101,34 +103,60 @@ function init() {
 	  scene.add(pano);
 	}
 	
+	console.log(camera.position.x);
+	
 	
     document.addEventListener("keydown", onDocumentKeyDown, false);
     function onDocumentKeyDown(event) {
         var keyCode = event.which;
-        if (keyCode == 49) {
+        if (keyCode == 49) { // 1
             controls.Mass1 = 10;
-        } else if (keyCode == 50) {
+        } else if (keyCode == 50) { // 2
             controls.Mass1 = 20;
-        } else if (keyCode == 51) {
+        } else if (keyCode == 51) { // 3
             controls.Mass2 = 30;
-        } else if (keyCode == 53) {
+        } else if (keyCode == 53) { // 5
             controls.Mass1 = 50;
             controls.Mass2 = 50;
-        } else if (keyCode == 54) {
+        } else if (keyCode == 54) { // 6
             controls.Mass1 = 60;
             controls.Mass2 = 60;
-        } else if (keyCode == 55) {
+        } else if (keyCode == 55) { // 7
             controls.Mass1 = 70;
             controls.Mass2 = 70;
-        } else if (keyCode == 56) {
+        } else if (keyCode == 56) { // 8
             controls.Mass1 = 80;
             controls.Mass2 = 80;
-        } else if (keyCode == 57) {
+        } else if (keyCode == 57) { // 9
             controls.initialFreq = 9;
-        } else if (keyCode == 48) {
+        } else if (keyCode == 48) { // 0
             controls.Mass1 = 40;
             controls.Mass2 = 40;
             controls.initialFreq = 20;
+            camera.position.x = 30;
+            camera.position.y = 30;
+            camera.position.z = 80;
+            camera.lookAt( new THREE.Vector3( 0, 0, 0 ) );
+        } else if (keyCode == 65) { // a
+            // Use rotation matrix, thanks Uly
+            camera_position_x_old = camera.position.x;
+            camera_position_z_old = camera.position.z;
+            camera.position.x = camera_position_x_old*Math.cos( theta )+camera_position_z_old*Math.sin( theta );
+            camera.position.z = -camera_position_x_old*Math.sin( theta )+camera_position_z_old*Math.cos( theta );
+        } else if (keyCode == 83) { // s
+            camera_position_x_old = camera.position.x;
+            camera_position_z_old = camera.position.z;
+            camera.position.x = camera_position_x_old*Math.cos( theta )-camera_position_z_old*Math.sin( theta );
+            camera.position.z = camera_position_x_old*Math.sin( theta )+camera_position_z_old*Math.cos( theta );
+        } else if (keyCode == 81) { // q zoom out
+            camera.position.x = camera.position.x*1.2;
+            camera.position.y = camera.position.y*1.2;
+            camera.position.z = camera.position.z*1.2;
+        }
+        else if (keyCode == 87) { // w zoom in
+            camera.position.x = camera.position.x/1.2;
+            camera.position.y = camera.position.y/1.2;
+            camera.position.z = camera.position.z/1.2;
         }
     };
 	
