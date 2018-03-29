@@ -23,8 +23,8 @@ function init() {
 	// info
 	info=document.getElementById('space2');
     
-	info.style.width = '5500px';
-	info.style.height = '4000px';
+	//info.style.width = '1920px';
+	//info.style.height = '10800px';
 
 	// WebGL renderer
 	renderer = new THREE.WebGLRenderer();
@@ -53,7 +53,7 @@ function init() {
 		this.howSlow=1;
 		this.initialFreq=20;
 		this.observedDistance=440;
-        this.noiseStrength=20;
+        //this.externalControl=20;
 	};
     
     
@@ -64,7 +64,7 @@ function init() {
 	howSlow_control=gui.add(controls, 'howSlow',1,10);
 	gui.add(controls, 'initialFreq', 5,50).listen();
 	gui.add(controls, 'observedDistance',100,500).listen();
-    gui.add(controls, 'noiseStrength',0,100).listen();
+    //gui.add(controls, 'externalControl',0,100).listen();
 
 	// AXES
 	axes = buildAxes(100);
@@ -88,7 +88,7 @@ function init() {
 
     // BACKGROUND
     var pano;
-	var loader = new THREE.TextureLoader();
+    var loader = new THREE.TextureLoader();
 	loader.load('images/equi-gal3.jpg', onTextureLoaded);
 	function onTextureLoaded(texture) {
 	  var geometry = new THREE.SphereGeometry(1000, 32, 32);
@@ -102,6 +102,35 @@ function init() {
 	}
 	
 	
+    document.addEventListener("keydown", onDocumentKeyDown, false);
+    function onDocumentKeyDown(event) {
+        var keyCode = event.which;
+        if (keyCode == 49) {
+            controls.Mass1 = 10;
+        } else if (keyCode == 50) {
+            controls.Mass1 = 20;
+        } else if (keyCode == 51) {
+            controls.Mass2 = 30;
+        } else if (keyCode == 53) {
+            controls.Mass1 = 50;
+            controls.Mass2 = 50;
+        } else if (keyCode == 54) {
+            controls.Mass1 = 60;
+            controls.Mass2 = 60;
+        } else if (keyCode == 55) {
+            controls.Mass1 = 70;
+            controls.Mass2 = 70;
+        } else if (keyCode == 56) {
+            controls.Mass1 = 80;
+            controls.Mass2 = 80;
+        } else if (keyCode == 57) {
+            controls.initialFreq = 9;
+        } else if (keyCode == 48) {
+            controls.Mass1 = 40;
+            controls.Mass2 = 40;
+            controls.initialFreq = 20;
+        }
+    };
 	
 	function buildAxes(length) {
 		var axes = new THREE.Object3D();
@@ -222,14 +251,18 @@ function animate(time) {
 			v.z=magnitude/dist0.length()*Math.cos(dist0.length()/size+new_angle);;
 		}
 	}
-
+    
+    //For future external command control
+    //    var update = function() {
+    //        requestAnimationFrame(update);
+    //        controls.externalControl = Math.random();
+    //    };
+    //update();
+    
 	//Update everything
 	camera_control.update();
 	plane.geometry.verticesNeedUpdate = true;
 	renderer.render(scene, camera );
-    var update = function() {
-        requestAnimationFrame(update);
-        controls.noiseStrength = Math.random();
-    };
-    update();
+    
+    
 }
