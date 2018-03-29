@@ -4,7 +4,7 @@
 ```
 python -m http 
 ```
-and than open from the localhost address in the browser the folder that contains the project. If you try to open directly the index.html, there are problems with the equirectangular image used for the background.
+and then open from the localhost address in the browser the folder that contains the project. If you try to open directly the index.html, there are problems with the equirectangular image used for the background.
  The gui panel uses dat.gui. You can change the parameter with the mouse or using this following keyboard configuartion
  
  Key | Change
