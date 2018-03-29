@@ -6,8 +6,9 @@ python -m http
 ```
 and than open from the localhost address in the browser the folder that contains the project. If you try to open directly the index.html, there are problem with the equirectangular image used for background
  The gui panel uses dat.gui. You can change the parameter with mouse or using this keyboard configuartion
- Key | Change|
- --- | ----- |
+ 
+ Key | Change
+ --- | ----- 
  1  | M_1 10 solar masses
  2  | M_1 20 solar masses
  3  | M_1 30 solar masses
