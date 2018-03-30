@@ -19,7 +19,6 @@ and then open from the localhost address in the browser the folder that contains
  7   | M_1 and M_2 70 solar masses
  8   | M_1 and M_2 80 solar masses
  9   | initial frequency of 9 Hz
- 
  0   | reset the initial setup
  a   | rotation anticlockwise
  s   | rotation clockwise
@@ -27,6 +26,3 @@ and then open from the localhost address in the browser the folder that contains
  w   | zoom in
  
  You can also change the point of view using mouse.
- 
- 
- 
