@@ -103,9 +103,6 @@ function init() {
 	  scene.add(pano);
 	}
 	
-	console.log(camera.position.x);
-	
-	
     document.addEventListener("keydown", onDocumentKeyDown, false);
     function onDocumentKeyDown(event) {
         var keyCode = event.which;
