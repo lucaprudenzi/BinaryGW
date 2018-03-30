@@ -145,6 +145,17 @@ function init() {
             camera_position_z_old = camera.position.z;
             camera.position.x = camera_position_x_old*Math.cos( theta )-camera_position_z_old*Math.sin( theta );
             camera.position.z = camera_position_x_old*Math.sin( theta )+camera_position_z_old*Math.cos( theta );
+        } else if (keyCode == 90) { // z up and down the plane
+            // Use rotation matrix, thanks Uly
+            camera_position_y_old = camera.position.y;
+            camera_position_z_old = camera.position.z;
+            camera.position.y = camera_position_y_old*Math.cos( theta )+camera_position_z_old*Math.sin( theta );
+            camera.position.z = -camera_position_y_old*Math.sin( theta )+camera_position_z_old*Math.cos( theta );
+        } else if (keyCode == 88) { // x
+            camera_position_y_old = camera.position.y;
+            camera_position_z_old = camera.position.z;
+            camera.position.y = camera_position_y_old*Math.cos( theta )-camera_position_z_old*Math.sin( theta );
+            camera.position.z = camera_position_y_old*Math.sin( theta )+camera_position_z_old*Math.cos( theta );
         } else if (keyCode == 81) { // q zoom out
             camera.position.x = camera.position.x*1.2;
             camera.position.y = camera.position.y*1.2;
