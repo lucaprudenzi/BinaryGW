@@ -24,5 +24,6 @@ and then open from the localhost address in the browser the folder that contains
  s   | rotation clockwise
  q   | zoom out
  w   | zoom in
+ z,x | up and down the plane
  
  You can also change the point of view using mouse.
