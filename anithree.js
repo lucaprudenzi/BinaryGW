@@ -53,7 +53,7 @@ function init() {
 		this.Mass2=40;
 		this.time_speed=0.1;
 		this.howSlow=1;
-		this.initialFreq=20;
+		this.initialFreq=10;
 		this.observedDistance=440;
         //this.externalControl=20;
 	};
@@ -83,7 +83,7 @@ function init() {
 	// PLANE
 	var planeGeometry = new THREE.PlaneGeometry(800, 800, 300, 300);
 	var planeMaterial = new THREE.MeshNormalMaterial({color: 0x45BEBF, wireframe: true});
-	plane = new THREE.Mesh(planeGeometry, planeMaterial);
+    plane = new THREE.Mesh(planeGeometry, planeMaterial);
 	plane.rotation.x = 0.5*Math.PI;
 	plane.position.set(0, 0, 0);
 	scene.add(plane);
@@ -107,29 +107,32 @@ function init() {
     function onDocumentKeyDown(event) {
         var keyCode = event.which;
         if (keyCode == 49) { // 1
-            controls.Mass1 = 10;
+            controls.Mass1 = 40;
+	    controls.Mass2 = 40;
         } else if (keyCode == 50) { // 2
-            controls.Mass1 = 20;
+            controls.Mass1 = 70;
+	    controls.Mass2 = 70
         } else if (keyCode == 51) { // 3
-            controls.Mass2 = 30;
+            controls.Mass1 = 90;
+	    controls.Mass2 = 90;
         } else if (keyCode == 53) { // 5
-            controls.Mass1 = 50;
-            controls.Mass2 = 50;
+            controls.Mass1 = 20;
+            controls.Mass2 = 30;
         } else if (keyCode == 54) { // 6
-            controls.Mass1 = 60;
+            controls.Mass1 = 20;
             controls.Mass2 = 60;
         } else if (keyCode == 55) { // 7
-            controls.Mass1 = 70;
-            controls.Mass2 = 70;
+            controls.Mass1 = 20;
+            controls.Mass2 = 100;
         } else if (keyCode == 56) { // 8
-            controls.Mass1 = 80;
-            controls.Mass2 = 80;
+            controls.Mass1 = 90;
+            controls.Mass2 = 50;
         } else if (keyCode == 57) { // 9
-            controls.initialFreq = 9;
+            controls.initialFreq = 20;
         } else if (keyCode == 48) { // 0
             controls.Mass1 = 40;
             controls.Mass2 = 40;
-            controls.initialFreq = 20;
+            controls.initialFreq = 10;
             camera.position.x = 30;
             camera.position.y = 30;
             camera.position.z = 80;
