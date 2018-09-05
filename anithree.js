@@ -17,10 +17,11 @@ G=6.67*Math.pow(10,-8);
 theta = 0.174533;
 
 init();
+ 
 animate();
 
-
 function init() {
+        
 
 	// info
 	info=document.getElementById('space2');
@@ -52,7 +53,6 @@ function init() {
 		this.Mass1=40;
 		this.Mass2=40;
 		this.time_speed=0.1;
-		this.howSlow=1;
 		this.initialFreq=10;
 		this.observedDistance=440;
         //this.externalControl=20;
@@ -63,7 +63,7 @@ function init() {
 	gui.add(controls, 'Mass1',1,100).listen();
 	gui.add(controls, 'Mass2',1,100).listen();
 	gui.add(controls, 'time_speed',0.01,1);
-	howSlow_control=gui.add(controls, 'howSlow',1,10);
+	//howSlow_control=gui.add(controls, 'howSlow',1,10);
 	gui.add(controls, 'initialFreq', 5,50).listen();
 	gui.add(controls, 'observedDistance',100,500).listen();
     //gui.add(controls, 'externalControl',0,100).listen();
@@ -77,6 +77,7 @@ function init() {
 	var material = new THREE.MeshNormalMaterial();
 	sphere1 = new THREE.Mesh( geometry, material);
 	sphere2 = new THREE.Mesh( geometry, material);
+    sphere3 = new THREE.Mesh( geometry, material);
 	scene.add(sphere1);
 	scene.add(sphere2);
 
@@ -223,11 +224,13 @@ function animate(time) {
 	nu_pass=nu;
 	freq_pass=controls.initialFreq;
 	obsDist=controls.observedDistance;
-
+    
 	//Time update
 	t_coal=5/(256*Math.pow(Math.PI,8/3))*Math.pow(Math.pow(c,3)/(G*m_sun*(controls.Mass1+controls.Mass2)),5/3)/(nu*Math.pow(controls.initialFreq,8/3));
-	t=(time/1000*controls.time_speed)%t_coal;
-	
+	//t=(time/1000*controls.time_speed)%t_coal;
+    t=(time/1000*controls.time_speed);
+
+    
     //Parameters of the orbits
     semi_major_axis=Math.pow(c,2)/(2*G*25*m_sun)*Math.pow(G*m_sun*(controls.Mass1+controls.Mass2)/Math.pow(controls.initialFreq*2*Math.PI,2),1/3);
 	major_axis=2*semi_major_axis;
@@ -235,73 +238,98 @@ function animate(time) {
 	//Initial positions of the two mass
     start1=major_axis*controls.Mass2/(controls.Mass1+controls.Mass2);
 	start2=major_axis*controls.Mass1/(controls.Mass1+controls.Mass2);
+    
+    // variable needed in if and else
+    var f; // frequency
+    var magnitude; // amplitude without 1/r dependence
+    var center0 = new THREE.Vector2(0,0); // center of the system
+    var size = 5; 
+    var vLength = plane.geometry.vertices.length; // number of vertices
+    var max_magnitude; // magnitude for final wave after merger
+    var max_f; // frequency for final wave after merger
+    var time_limit=0.04; // switch to else in time_limit before coalescence 
 
-	//Update the radius of inspiral
-    if (t_coal-t>0){
+	
+    //Update the radius of inspiral
+    if (t_coal-t>time_limit){
 		new_radius1=start1*Math.pow(1-t/t_coal,1/4);
-		new_radius2=start2*Math.pow(1-t/t_coal,1/4);	
-		new_angle=Math.pow(5*G*M_c/Math.pow(c,3),-5/8)/controls.howSlow*Math.pow(t_coal-t,5/8);
+		new_radius2=start2*Math.pow(1-t/t_coal,1/4);
+        
+        // 2*pi*freuquency*tau = new angle
+		new_angle=Math.pow(5*G*M_c/Math.pow(c,3),-5/8)*Math.pow(t_coal-t,5/8);
+        f=Math.pow(G*M_c/Math.pow(c,3),-5/8)/Math.PI*Math.pow(5/256/(t_coal-t),3/8);
+
 		sphere2.position.set(-new_radius2*Math.cos(new_angle),0,new_radius2*Math.sin(new_angle));
 		sphere1.position.set(+new_radius1*Math.cos(new_angle),0,-new_radius1*Math.sin(new_angle));
-	}
+        
+        //Spin of the mass
+        //sphere1.rotation.y+=0.1;
+        //sphere2.rotation.y+=0.1;
+        
+        //Sphere radius update
+        sphere1.scale.x=controls.Mass1/25;
+        sphere1.scale.y=controls.Mass1/25;
+        sphere1.scale.z=controls.Mass1/25;
+        sphere2.scale.x=controls.Mass2/25;
+        sphere2.scale.y=controls.Mass2/25;
+        sphere2.scale.z=controls.Mass2/25;
+
+        //Distance update
+        old_major_ax=controls.major_ax;
+
+        //wave freq
+        // H plus MAGNITUDE (X2000)
+        magnitude=2000*Math.pow(G*M_c/Math.pow(c,2),5/4)*Math.pow(5/(t_coal-t)/c,1/4)/(2*G*25*m_sun/c/c);
+
+        // WAVE UPDATE     
+        for (var i = 0; i < vLength; i++) {
+            var v = plane.geometry.vertices[i];
+            //var dist1 = new THREE.Vector2(v.x, v.y).sub(center1).add(new THREE.Vector2(0.001,0.001));
+            //var dist2 = new THREE.Vector2(v.x, v.y).sub(center2).add(new THREE.Vector2(0.001,0.001));
+            var dist0 = new THREE.Vector2(v.x, v.y).sub(center0).add(new THREE.Vector2(0.001,0.001));
+
+            if (dist0.length()<(1.1*start1+1.1*start2)){
+                v.z=0;
+            }
+            else{
+                //v.z=magnitude/dist0.length()*Math.cos(dist0.length()/size+new_angle);
+                v.z=magnitude/dist0.length()*Math.cos(2*Math.PI*f*(t_coal-t)+dist0.length()/size);
+            }
+            
+        }
+        
+    }
 	else{
-		t=0;
-	}
+        // quantities for final gw wave after merger
+        max_magnitude=2000*Math.pow(G*M_c/Math.pow(c,2),5/4)*Math.pow(5/(time_limit)/c,1/4)/(2*G*25*m_sun/c/c);
+        max_f=Math.pow(G*M_c/Math.pow(c,3),-5/8)/Math.PI*Math.pow(5/256/(time_limit),3/8);
+        // remove sphere1 and sphere2 and show final object
+        scene.remove(sphere1);
+        scene.remove(sphere2);
+        scene.add(sphere3);
+        sphere3.scale.x=(controls.Mass1+controls.Mass2)/25;
+        sphere3.scale.y=(controls.Mass1+controls.Mass2)/25;
+        sphere3.scale.z=(controls.Mass1+controls.Mass2)/25;
+        sphere3.position.set(0,0,0);
+        
+        // expansion of flat surface and propagation of final gw wave with final properties
+        for (var i = 0; i < vLength; i++) {
+            var v = plane.geometry.vertices[i];
+            var dist0 = new THREE.Vector2(v.x, v.y).sub(center0).add(new THREE.Vector2(0.001,0.001));
+            if (dist0.length()<(1.1*start1+1.1*start2+(t-t_coal)*max_f*25)){
+                v.z=0;
+            }
+            else{
+                v.z=max_magnitude/dist0.length()*Math.cos(2*Math.PI*max_f*(t_coal-t)+dist0.length()/size);
+            }
+            
+        }
 	
-	//Spin of the mass
-	sphere1.rotation.y+=0.1;
-	sphere2.rotation.y+=0.1;
-	
-	//Sphere radius update
-	sphere1.scale.x=controls.Mass1/25;
-	sphere1.scale.y=controls.Mass1/25;
-	sphere1.scale.z=controls.Mass1/25;
-	sphere2.scale.x=controls.Mass2/25;
-	sphere2.scale.y=controls.Mass2/25;
-	sphere2.scale.z=controls.Mass2/25;
-
-	//Distance update
-	old_major_ax=controls.major_ax;
-
-	//wave freq
-	f=1/Math.PI*Math.pow(5/256/(t_coal-t),3/8)*Math.pow(G*M_c/Math.pow(c,3),-5/8);
-	// H plus MAGNITUDE (X2000)
-	var magnitude=2000*Math.pow(G*M_c/Math.pow(c,2),5/4)*Math.pow(5/(t_coal-t)/c,1/4)/(2*G*25*m_sun/c/c)
-
-	// WAVE UPDATE 
-    // Commented lines would show two centers, unphysical situation
-	
-    //var center1 = new THREE.Vector2(sphere1.position.x,sphere1.position.z);
-	//var center2 = new THREE.Vector2(sphere2.position.x,sphere2.position.z);
-	var center0 = new THREE.Vector2(0,0);
-	var vLength = plane.geometry.vertices.length;
-
-	for (var i = 0; i < vLength; i++) {
-		var v = plane.geometry.vertices[i];
-		//var dist1 = new THREE.Vector2(v.x, v.y).sub(center1).add(new THREE.Vector2(0.001,0.001));
-		//var dist2 = new THREE.Vector2(v.x, v.y).sub(center2).add(new THREE.Vector2(0.001,0.001));
-		var dist0 = new THREE.Vector2(v.x, v.y).sub(center0).add(new THREE.Vector2(0.001,0.001));
-		var size = 5;
-
-		if (dist0.length()<(1.1*start1+1.1*start2)){
-			v.z=0;
-		}
-		else{
-			v.z=magnitude/dist0.length()*Math.cos(dist0.length()/size+new_angle);;
-		}
-	}
-    
-    //For future external command control
-    //    var update = function() {
-    //        requestAnimationFrame(update);
-    //        controls.externalControl = Math.random();
-    //    };
-    //update();
+    }
     
 	//Update everything
 	camera_control.update();
 	plane.geometry.verticesNeedUpdate = true;
 	renderer.render(scene, camera );
-    
     
 }
