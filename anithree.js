@@ -104,30 +104,12 @@ function init() {
 	}
 	
 		document.addEventListener( 'touchstart', onDocumentTouchStart, false );
-	document.addEventListener( 'touchstart', onDocumentTouchStart, false );  
 	function onDocumentTouchStart( event ) {
-
-                if ( event.touches.length == 1 ) {
-
-                    event.preventDefault();
-
-                    mouseXOnMouseDown = event.touches[ 0 ].pageX - windowHalfX;
-                    targetRotationOnMouseDown = targetRotation;
-
-                }
-            }
-
-            function onDocumentTouchMove( event ) {
-
-                if ( event.touches.length == 1 ) {
-
-                    event.preventDefault();
-
-                    mouseX = event.touches[ 0 ].pageX - windowHalfX;
-                    targetRotation = targetRotationOnMouseDown + ( mouseX - mouseXOnMouseDown ) * 0.05;
-
-                }
-            }
+		event.preventDefault();
+		event.clientX = event.touches[0].clientX;
+		event.clientY = event.touches[0].clientY;
+ 
+	}
     document.addEventListener("keydown", onDocumentKeyDown, false);
     function onDocumentKeyDown(event) {
         var keyCode = event.which;
