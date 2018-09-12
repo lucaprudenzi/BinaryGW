@@ -16,6 +16,15 @@ c=3*Math.pow(10,10);
 G=6.67*Math.pow(10,-8);
 theta = 0.174533;
 
+// Mass variables
+var M1_new;
+var M2_new;
+
+// Time variables
+var time_new;
+var clock = new THREE.Clock();
+var time_subtract;
+
 init();
  
 animate();
@@ -103,13 +112,7 @@ function init() {
 	  scene.add(pano);
 	}
 	
-		document.addEventListener( 'touchstart', onDocumentTouchStart, false );
-	function onDocumentTouchStart( event ) {
-		event.preventDefault();
-		event.clientX = event.touches[0].clientX;
-		event.clientY = event.touches[0].clientY;
-		onDocumentMouseDown( event );
-	}
+
     document.addEventListener("keydown", onDocumentKeyDown, false);
     function onDocumentKeyDown(event) {
         var keyCode = event.which;
@@ -213,7 +216,7 @@ function init() {
 
 function animate(time) {
 	requestAnimationFrame(animate);
-	
+
     //ensure that the clock is started
     if (isNaN(time)){
   		time=0;
@@ -231,10 +234,18 @@ function animate(time) {
 	freq_pass=controls.initialFreq;
 	obsDist=controls.observedDistance;
     
+    if (M1_new != M1_pass || M2_new != M2_pass){
+        time_subtract = clock.getElapsedTime();
+        time_new = 0.01;
+    }
+    
+    
 	//Time update
+	time_new = clock.getElapsedTime() - time_subtract;
+
 	t_coal=5/(256*Math.pow(Math.PI,8/3))*Math.pow(Math.pow(c,3)/(G*m_sun*(controls.Mass1+controls.Mass2)),5/3)/(nu*Math.pow(controls.initialFreq,8/3));
 	//t=(time/1000*controls.time_speed)%t_coal;
-    t=(time/1000*controls.time_speed);
+    t=(time_new*controls.time_speed);
 
     
     //Parameters of the orbits
@@ -258,6 +269,9 @@ function animate(time) {
 	
     //Update the radius of inspiral
     if (t_coal-t>time_limit){
+        scene.add(sphere1);
+        scene.add(sphere2);
+        scene.remove(sphere3);
 		new_radius1=start1*Math.pow(1-t/t_coal,1/4);
 		new_radius2=start2*Math.pow(1-t/t_coal,1/4);
         
@@ -322,7 +336,7 @@ function animate(time) {
         for (var i = 0; i < vLength; i++) {
             var v = plane.geometry.vertices[i];
             var dist0 = new THREE.Vector2(v.x, v.y).sub(center0).add(new THREE.Vector2(0.001,0.001));
-            if (dist0.length()<(1.1*start1+1.1*start2+(t-t_coal)*max_f*25)){
+            if (dist0.length()<(1.1*start1+1.1*start2+(t-t_coal)*max_f*30)){
                 v.z=0;
             }
             else{
@@ -333,9 +347,13 @@ function animate(time) {
 	
     }
     
+    M1_new=controls.Mass1;
+	M2_new=controls.Mass2;
+    
 	//Update everything
 	camera_control.update();
 	plane.geometry.verticesNeedUpdate = true;
 	renderer.render(scene, camera );
+    
     
 }
