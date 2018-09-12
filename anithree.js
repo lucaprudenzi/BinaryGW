@@ -22,7 +22,6 @@ animate();
 
 function init() {
         
-
 	// info
 	info=document.getElementById('space2');
     
@@ -104,6 +103,31 @@ function init() {
 	  scene.add(pano);
 	}
 	
+		document.addEventListener( 'touchstart', onDocumentTouchStart, false );
+	document.addEventListener( 'touchstart', onDocumentTouchStart, false );  
+	function onDocumentTouchStart( event ) {
+
+                if ( event.touches.length == 1 ) {
+
+                    event.preventDefault();
+
+                    mouseXOnMouseDown = event.touches[ 0 ].pageX - windowHalfX;
+                    targetRotationOnMouseDown = targetRotation;
+
+                }
+            }
+
+            function onDocumentTouchMove( event ) {
+
+                if ( event.touches.length == 1 ) {
+
+                    event.preventDefault();
+
+                    mouseX = event.touches[ 0 ].pageX - windowHalfX;
+                    targetRotation = targetRotationOnMouseDown + ( mouseX - mouseXOnMouseDown ) * 0.05;
+
+                }
+            }
     document.addEventListener("keydown", onDocumentKeyDown, false);
     function onDocumentKeyDown(event) {
         var keyCode = event.which;
