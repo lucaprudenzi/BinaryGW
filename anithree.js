@@ -108,7 +108,7 @@ function init() {
 		event.preventDefault();
 		event.clientX = event.touches[0].clientX;
 		event.clientY = event.touches[0].clientY;
- 
+		onDocumentMouseDown( event );
 	}
     document.addEventListener("keydown", onDocumentKeyDown, false);
     function onDocumentKeyDown(event) {
