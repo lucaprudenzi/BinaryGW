@@ -14,7 +14,8 @@ var radius_camera;
 m_sun=2*Math.pow(10,33);
 c=3*Math.pow(10,10);
 G=6.67*Math.pow(10,-8);
-theta = 0.174533;
+// 5 degrees
+theta = 0.0872222222;
 
 // Mass variables
 var M1_new;
@@ -170,14 +171,14 @@ function init() {
             camera.position.y = camera_position_y_old*Math.cos( theta )-camera_position_z_old*Math.sin( theta );
             camera.position.z = camera_position_y_old*Math.sin( theta )+camera_position_z_old*Math.cos( theta );
         } else if (keyCode == 81) { // q zoom out
-            camera.position.x = camera.position.x*1.2;
-            camera.position.y = camera.position.y*1.2;
-            camera.position.z = camera.position.z*1.2;
+            camera.position.x = camera.position.x*1.1;
+            camera.position.y = camera.position.y*1.1;
+            camera.position.z = camera.position.z*1.1;
         }
         else if (keyCode == 87) { // w zoom in
-            camera.position.x = camera.position.x/1.2;
-            camera.position.y = camera.position.y/1.2;
-            camera.position.z = camera.position.z/1.2;
+            camera.position.x = camera.position.x/1.1;
+            camera.position.y = camera.position.y/1.1;
+            camera.position.z = camera.position.z/1.1;
         }
     };
 	
@@ -296,7 +297,6 @@ function animate(time) {
 
         //Distance update
         old_major_ax=controls.major_ax;
-
         //wave freq
         // H plus MAGNITUDE (X2000)
         magnitude=2000*Math.pow(G*M_c/Math.pow(c,2),5/4)*Math.pow(5/(t_coal-t)/c,1/4)/(2*G*25*m_sun/c/c);
@@ -310,6 +310,20 @@ function animate(time) {
 
             if (dist0.length()<(1.1*start1+1.1*start2)){
                 v.z=0;
+                if ((Math.pow(-new_radius2*Math.cos(new_angle)-v.x,2)+Math.pow(new_radius2*Math.sin(new_angle)-v.y,2))<500){
+                    v.z=500/Math.pow(Math.pow(-new_radius2*Math.cos(new_angle)-v.x,2)+Math.pow(new_radius2*Math.sin(new_angle)-v.y,2),2);
+                    //console.log(v.z)
+                    if (v.z>2*M2_pass){
+                        v.z=2*M2_pass;
+                    }
+                }
+                if ((Math.pow(+new_radius1*Math.cos(new_angle)-v.x,2)+Math.pow(-new_radius1*Math.sin(new_angle)-v.y,2))<500){
+                    v.z=500/Math.pow(Math.pow(new_radius1*Math.cos(new_angle)-v.x,2)+Math.pow(-new_radius1*Math.sin(new_angle)-v.y,2),2);
+                    //console.log(v.z)
+                    if (v.z>2*M1_pass){
+                        v.z=2*M1_pass;
+                    }
+                }
             }
             else{
                 //v.z=magnitude/dist0.length()*Math.cos(dist0.length()/size+new_angle);
@@ -336,12 +350,30 @@ function animate(time) {
         for (var i = 0; i < vLength; i++) {
             var v = plane.geometry.vertices[i];
             var dist0 = new THREE.Vector2(v.x, v.y).sub(center0).add(new THREE.Vector2(0.001,0.001));
-            if (dist0.length()<(1.1*start1+1.1*start2+(t-t_coal)*max_f*30)){
+            
+            if (dist0.length()<30){
+            //        v.z=100/dist0.length();
                 v.z=0;
+                v.z=2/dist0.length();
+                
             }
-            else{
+                    //console.log(v.z)
+                    
+            //}
+            if (dist0.length()<(0.9*start1+0.9*start2+(t-t_coal)*max_f*30)){
+                v.z=500/dist0.length();
+                if (v.z>2*(M1_pass+M2_pass)){
+                    v.z=2*(M1_pass+M2_pass);
+                }
+
+                
+            }
+            if (dist0.length()>(1.1*start1+1.1*start2+(t-t_coal)*max_f*30)){
                 v.z=max_magnitude/dist0.length()*Math.cos(2*Math.PI*max_f*(t_coal-t)+dist0.length()/size);
             }
+            
+            
+            
             
         }
 	
