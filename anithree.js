@@ -308,10 +308,10 @@ function animate(time) {
             //var dist2 = new THREE.Vector2(v.x, v.y).sub(center2).add(new THREE.Vector2(0.001,0.001));
             var dist0 = new THREE.Vector2(v.x, v.y).sub(center0).add(new THREE.Vector2(0.001,0.001));
             if (dist0.length()<(1.1*start1+1.1*start2)){
-                v.z=0;
+                //v.z=0;
+                v.z=Math.exp(-1*Math.pow((1.1*start1+1.1*start2)/dist0.length(),2))*magnitude/dist0.length()*Math.cos(2*Math.PI*f*(t_coal-t)+dist0.length()/size);
                 if ((Math.pow(-new_radius2*Math.cos(new_angle)-v.x,2)+Math.pow(new_radius2*Math.sin(new_angle)-v.y,2))<100){
                     v.z=1000/Math.pow(Math.pow(-new_radius2*Math.cos(new_angle)-v.x,2)+Math.pow(new_radius2*Math.sin(new_angle)-v.y,2),2);
-                    console.log(v.z)
                     if (v.z>2*M2_pass){
                         v.z=2*M2_pass;
                     }
@@ -354,7 +354,7 @@ function animate(time) {
                 v.z=max_magnitude/dist0.length()*Math.cos(2*Math.PI*max_f*(t_coal-t)+dist0.length()/size);
             }
             
-            if (dist0.length()<(0.9*start1+0.9*start2+(t-t_coal)*max_f*30)){
+            if (dist0.length()<(1.1*start1+1.1*start2+(t-t_coal)*max_f*30)){
                 v.z=200/dist0.length();
                 if (v.z>2*(M1_pass+M2_pass)){
                     v.z=2*(M1_pass+M2_pass);
