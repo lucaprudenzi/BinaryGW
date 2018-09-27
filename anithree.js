@@ -26,6 +26,9 @@ var time_new;
 var clock = new THREE.Clock();
 var time_subtract;
 
+
+var keyCode;
+
 init();
  
 animate();
@@ -113,11 +116,11 @@ function init() {
 	  scene.add(pano);
 	}
 	
-
     document.addEventListener("keydown", onDocumentKeyDown, false);
     function onDocumentKeyDown(event) {
-        var keyCode = event.which;
-        if (keyCode == 49) { // 1
+        keyCode = event.which;
+				console.log(event.which);
+				if (keyCode == 49) { // 1
             controls.initialFreq = 10;
 						controls.Mass1 = 80;
 				    controls.Mass2 = 80;
@@ -130,18 +133,26 @@ function init() {
 				    controls.Mass2 = 29;
 						controls.initialFreq = 30;
         } else if (keyCode == 52) { // 4
-            controls.Mass1 = 2;
-            controls.Mass2 = 2;
-						controls.initialFreq = 70
+            controls.Mass1 = 10;
+            controls.Mass2 = 10;
+						controls.initialFreq = 30
 				} else if (keyCode == 53) { // 5
             controls.Mass1 = 40;
             controls.Mass2 = 40;
+            controls.initialFreq = 15;
+				} else if (keyCode == 54) { // 6
+            controls.Mass1 = 20;
+            controls.Mass2 = 20;
+            controls.initialFreq = 20;
+			  } else if (keyCode == 55) { // 7
+            controls.Mass1 = 100;
+            controls.Mass2 = 8;
+            controls.initialFreq = 20;
+			 } else if (keyCode == 56) { // 8
+            controls.Mass1 = 90;
+            controls.Mass2 = 40;
             controls.initialFreq = 10;
-            camera.position.x = 30;
-            camera.position.y = 30;
-            camera.position.z = 80;
-            camera.lookAt( new THREE.Vector3( 0, 0, 0 ) );
-        } else if (keyCode == 65) { // a
+				} else if (keyCode == 65) { // a
             // Use rotation matrix, thanks Uly
             camera_position_x_old = camera.position.x;
             camera_position_z_old = camera.position.z;
@@ -348,11 +359,11 @@ function animate(time) {
             var v = plane.geometry.vertices[i];
             var dist0 = new THREE.Vector2(v.x, v.y).sub(center0).add(new THREE.Vector2(0.001,0.001));
             
-            if (dist0.length()>(3*start1+3*start2+(t-t_coal)*max_f*30)){
+            if (dist0.length()>(1.2*start1+1.2*start2+(t-t_coal)*max_f*30)){
                 v.z=max_magnitude/dist0.length()*Math.cos(2*Math.PI*max_f*(t_coal-t)+dist0.length()/size);
             }
             
-            if (dist0.length()<(3*start1+3*start2+(t-t_coal)*max_f*30)){
+            if (dist0.length()<(1.2*start1+1.2*start2+(t-t_coal)*max_f*30)){
                 v.z=10*(M1_pass+M2_pass)/(Math.pow(dist0.length(),2.5));
                 if (v.z>2*(M1_pass+M2_pass)){
                     v.z=2*(M1_pass+M2_pass);
@@ -363,7 +374,7 @@ function animate(time) {
 	
     }
     
-    M1_new=controls.Mass1;
+  M1_new=controls.Mass1;
 	M2_new=controls.Mass2;
     
 	//Update everything
