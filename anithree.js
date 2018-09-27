@@ -14,8 +14,8 @@ var radius_camera;
 m_sun=2*Math.pow(10,33);
 c=3*Math.pow(10,10);
 G=6.67*Math.pow(10,-8);
-// 5 degrees
-theta = 0.0872222222;
+// 3 degrees
+theta = 0.052333333; 
 
 // Mass variables
 var M1_new;
@@ -118,29 +118,22 @@ function init() {
     function onDocumentKeyDown(event) {
         var keyCode = event.which;
         if (keyCode == 49) { // 1
-            controls.Mass1 = 40;
-	    controls.Mass2 = 40;
+            controls.initialFreq = 10;
+						controls.Mass1 = 80;
+				    controls.Mass2 = 80;
         } else if (keyCode == 50) { // 2
-            controls.Mass1 = 70;
-	    controls.Mass2 = 70
+						controls.initialFreq = 10;
+						controls.Mass1 = 100;
+						controls.Mass2 = 20
         } else if (keyCode == 51) { // 3
-            controls.Mass1 = 90;
-	    controls.Mass2 = 90;
-        } else if (keyCode == 53) { // 5
-            controls.Mass1 = 20;
-            controls.Mass2 = 30;
-        } else if (keyCode == 54) { // 6
-            controls.Mass1 = 20;
-            controls.Mass2 = 60;
-        } else if (keyCode == 55) { // 7
-            controls.Mass1 = 20;
-            controls.Mass2 = 100;
-        } else if (keyCode == 56) { // 8
-            controls.Mass1 = 90;
-            controls.Mass2 = 50;
-        } else if (keyCode == 57) { // 9
-            controls.initialFreq = 20;
-        } else if (keyCode == 48) { // 0
+						controls.Mass1 = 36;
+				    controls.Mass2 = 29;
+						controls.initialFreq = 30;
+        } else if (keyCode == 52) { // 4
+            controls.Mass1 = 2;
+            controls.Mass2 = 2;
+						controls.initialFreq = 70
+				} else if (keyCode == 53) { // 5
             controls.Mass1 = 40;
             controls.Mass2 = 40;
             controls.initialFreq = 10;
@@ -159,13 +152,13 @@ function init() {
             camera_position_z_old = camera.position.z;
             camera.position.x = camera_position_x_old*Math.cos( theta )-camera_position_z_old*Math.sin( theta );
             camera.position.z = camera_position_x_old*Math.sin( theta )+camera_position_z_old*Math.cos( theta );
-        } else if (keyCode == 90) { // z up and down the plane
+        } else if (keyCode == 57) { // 9  up and down the plane
             // Use rotation matrix, thanks Uly
             camera_position_y_old = camera.position.y;
             camera_position_z_old = camera.position.z;
             camera.position.y = camera_position_y_old*Math.cos( theta )+camera_position_z_old*Math.sin( theta );
             camera.position.z = -camera_position_y_old*Math.sin( theta )+camera_position_z_old*Math.cos( theta );
-        } else if (keyCode == 88) { // x
+        } else if (keyCode == 48) { // 0
             camera_position_y_old = camera.position.y;
             camera_position_z_old = camera.position.z;
             camera.position.y = camera_position_y_old*Math.cos( theta )-camera_position_z_old*Math.sin( theta );
@@ -307,18 +300,22 @@ function animate(time) {
             //var dist1 = new THREE.Vector2(v.x, v.y).sub(center1).add(new THREE.Vector2(0.001,0.001));
             //var dist2 = new THREE.Vector2(v.x, v.y).sub(center2).add(new THREE.Vector2(0.001,0.001));
             var dist0 = new THREE.Vector2(v.x, v.y).sub(center0).add(new THREE.Vector2(0.001,0.001));
-            if (dist0.length()<(1.1*start1+1.1*start2)){
-                //v.z=0;
-                v.z=Math.exp(-1*Math.pow((1.1*start1+1.1*start2)/dist0.length(),2))*magnitude/dist0.length()*Math.cos(2*Math.PI*f*(t_coal-t)+dist0.length()/size);
-                if ((Math.pow(-new_radius2*Math.cos(new_angle)-v.x,2)+Math.pow(new_radius2*Math.sin(new_angle)-v.y,2))<100){
-                    v.z=1000/Math.pow(Math.pow(-new_radius2*Math.cos(new_angle)-v.x,2)+Math.pow(new_radius2*Math.sin(new_angle)-v.y,2),2);
+          //Wave update in inner area  
+					if (dist0.length()<(1.2*start1+1.2*start2)){
+            // exponential decay in inner area
+						v.z=Math.exp(-1*Math.pow((1.2*start1+1.2*start2)/dist0.length(),2))*magnitude/dist0.length()*Math.cos(2*Math.PI*f*(t_coal-t)+dist0.length()/size);
+						// gravitational well for mass2
+                if ((Math.pow(-new_radius2*Math.cos(new_angle)-v.x,2)+Math.pow(new_radius2*Math.sin(new_angle)-v.y,2))<2*M2_pass){
+                    v.z=10*M2_pass/Math.pow(Math.pow(-new_radius2*Math.cos(new_angle)-v.x,2)+Math.pow(new_radius2*Math.sin(new_angle)-v.y,2),5/4);
+									// cut to the bottom of well
                     if (v.z>2*M2_pass){
                         v.z=2*M2_pass;
                     }
                 }
-                if ((Math.pow(+new_radius1*Math.cos(new_angle)-v.x,2)+Math.pow(-new_radius1*Math.sin(new_angle)-v.y,2))<100){
-                    v.z=1000/Math.pow(Math.pow(new_radius1*Math.cos(new_angle)-v.x,2)+Math.pow(-new_radius1*Math.sin(new_angle)-v.y,2),2);
-                    //console.log(v.z)
+						// gravitational well for mass1
+                if ((Math.pow(+new_radius1*Math.cos(new_angle)-v.x,2)+Math.pow(-new_radius1*Math.sin(new_angle)-v.y,2))<2*M1_pass){
+                    v.z=10*M1_pass/Math.pow(Math.pow(new_radius1*Math.cos(new_angle)-v.x,2)+Math.pow(-new_radius1*Math.sin(new_angle)-v.y,2),5/4);
+									// cut to the bottom of the well
                     if (v.z>2*M1_pass){
                         v.z=2*M1_pass;
                     }
@@ -332,6 +329,7 @@ function animate(time) {
         }
         
     }
+	// AFTER THE MERGER
 	else{
         // quantities for final gw wave after merger
         max_magnitude=2000*Math.pow(G*M_c/Math.pow(c,2),5/4)*Math.pow(5/(time_limit)/c,1/4)/(2*G*25*m_sun/c/c);
@@ -350,12 +348,12 @@ function animate(time) {
             var v = plane.geometry.vertices[i];
             var dist0 = new THREE.Vector2(v.x, v.y).sub(center0).add(new THREE.Vector2(0.001,0.001));
             
-            if (dist0.length()>(1.1*start1+1.1*start2+(t-t_coal)*max_f*30)){
+            if (dist0.length()>(3*start1+3*start2+(t-t_coal)*max_f*30)){
                 v.z=max_magnitude/dist0.length()*Math.cos(2*Math.PI*max_f*(t_coal-t)+dist0.length()/size);
             }
             
-            if (dist0.length()<(1.1*start1+1.1*start2+(t-t_coal)*max_f*30)){
-                v.z=200/dist0.length();
+            if (dist0.length()<(3*start1+3*start2+(t-t_coal)*max_f*30)){
+                v.z=10*(M1_pass+M2_pass)/(Math.pow(dist0.length(),2.5));
                 if (v.z>2*(M1_pass+M2_pass)){
                     v.z=2*(M1_pass+M2_pass);
                 }
