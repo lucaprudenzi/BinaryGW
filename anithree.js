@@ -57,7 +57,7 @@ function init() {
 
 	// CAMERA CONTROLS
 	camera_control = new THREE.OrbitControls(camera, renderer.domElement);
-	camera_control.enableDamping = True;
+	camera_control.enableDamping = true;
 	camera_control.dampingFactor = 0.25;
 	camera_control.screenSpacePanning = false;
 	camera_control.minDistance = 5;
