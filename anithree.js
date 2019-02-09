@@ -56,7 +56,10 @@ function init() {
 	camera.lookAt( new THREE.Vector3( 0, 0, 0 ) );
 
 	// CAMERA CONTROLS
-	camera_control = new THREE.OrbitControls(camera);
+	camera_control = new THREE.OrbitControls(camera, renderer.domElement);
+	camera_control.enableDamping = True;
+	camera_control.dampingFactor = 0.25;
+	camera_control.screenSpacePanning = false;
 	camera_control.minDistance = 5;
 	camera_control.maxDistance = 800;
 
@@ -115,12 +118,18 @@ function init() {
 	  pano.position.y = 0;
 	  scene.add(pano);
 	}
-	
-    document.addEventListener("keydown", onDocumentKeyDown, false);
-    function onDocumentKeyDown(event) {
-        keyCode = event.which;
-				console.log(event.which);
-				if (keyCode == 49) { // 1
+	window.addEventListener( 'resize', onWindowResize, false );
+	function onWindowResize() {
+		camera.aspect = window.innerWidth / window.innerHeight;
+		camera.updateProjectionMatrix();
+		renderer.setSize( window.innerWidth, window.innerHeight );
+	}
+    
+	document.addEventListener("keydown", onDocumentKeyDown, false);
+   function onDocumentKeyDown(event) {
+      keyCode = event.which;
+			console.log(event.which);
+			if (keyCode == 49) { // 1
             controls.initialFreq = 10;
 						controls.Mass1 = 80;
 				    controls.Mass2 = 80;
